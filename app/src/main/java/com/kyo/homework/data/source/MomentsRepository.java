@@ -68,7 +68,7 @@ public class MomentsRepository implements MomentsDataSource {
                                 callback.onMomentsLoaded(null);
                             }
                         }
-                        
+
                         @Override
                         public void onFailure(Call<List<MomentEntity>> call, Throwable t) {
                             callback.onFailure(t);
