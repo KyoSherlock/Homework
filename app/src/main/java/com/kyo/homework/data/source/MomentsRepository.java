@@ -9,6 +9,7 @@ import com.kyo.homework.data.MomentEntity;
 import com.kyo.homework.data.UserEntity;
 import com.kyo.homework.data.source.remote.HomeworkRetrofit;
 import com.kyo.homework.data.source.remote.service.MomentsService;
+import com.kyo.homework.util.EspressoIdlingResource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,17 +33,20 @@ public class MomentsRepository implements MomentsDataSource {
 
     @Override
     public void getUserInfo(final LoadUserCallback callback) {
+        EspressoIdlingResource.increment();
         HomeworkRetrofit.build().create(MomentsService.class)
                 .getUserInfo(USER)
                 .enqueue(new Callback<UserEntity>() {
                     @Override
                     public void onResponse(Call<UserEntity> call, Response<UserEntity> response) {
                         callback.onUserInfoLoaded(response.body());
+                        EspressoIdlingResource.decrement();
                     }
 
                     @Override
                     public void onFailure(Call<UserEntity> call, Throwable t) {
                         callback.onFailure(t);
+                        EspressoIdlingResource.decrement();
                     }
                 });
     }
@@ -50,7 +54,7 @@ public class MomentsRepository implements MomentsDataSource {
 
     @Override
     public void getMoments(final int start, final int size, final LoadMomentsCallback callback) {
-        Log.e("Kyo", "getMoments start:" + start + ", size:" + size);
+        EspressoIdlingResource.increment();
         if (cachedMoments != null) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -70,6 +74,7 @@ public class MomentsRepository implements MomentsDataSource {
                         momentEntities.add(cachedMoments.get(i));
                     }
                     callback.onMomentsLoaded(momentEntities);
+                    EspressoIdlingResource.decrement();
                 }
             }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         } else {
@@ -80,18 +85,6 @@ public class MomentsRepository implements MomentsDataSource {
                         public void onResponse(Call<List<MomentEntity>> call, Response<List<MomentEntity>> response) {
                             List<MomentEntity> momentEntities = response.body();
                             if (momentEntities != null) {
-//                                // remove invalid data
-//                                Iterator<MomentEntity> iterator = momentEntities.iterator();
-//                                while (iterator.hasNext()) {
-//                                    MomentEntity entity = iterator.next();
-//                                    if (entity == null ||
-//                                            entity.sender == null ||
-//                                            ((entity.images == null || entity.images.isEmpty()) && TextUtils.isEmpty(entity.content))) {
-//                                        iterator.remove();
-//                                    }
-//                                }
-
-                                // callback
                                 cachedMoments = momentEntities;
                                 momentEntities = new ArrayList<>(size);
                                 for (int i = start; i < cachedMoments.size() && (i - start) < size; i++) {
@@ -101,11 +94,13 @@ public class MomentsRepository implements MomentsDataSource {
                             } else {
                                 callback.onMomentsLoaded(null);
                             }
+                            EspressoIdlingResource.decrement();
                         }
 
                         @Override
                         public void onFailure(Call<List<MomentEntity>> call, Throwable t) {
                             callback.onFailure(t);
+                            EspressoIdlingResource.decrement();
                         }
                     });
         }

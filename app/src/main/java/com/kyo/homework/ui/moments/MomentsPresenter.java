@@ -3,12 +3,14 @@ package com.kyo.homework.ui.moments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
 import com.kyo.homework.data.MomentEntity;
 import com.kyo.homework.data.UserEntity;
 import com.kyo.homework.data.source.MomentsDataSource;
 import com.kyo.homework.data.source.MomentsRepository;
+import com.kyo.homework.util.EspressoIdlingResource;
 
 import java.lang.ref.WeakReference;
 import java.util.List;

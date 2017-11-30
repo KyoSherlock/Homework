@@ -2,6 +2,8 @@ package com.kyo.homework.ui.moments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import com.kyo.homework.R;
 import com.kyo.homework.data.MomentEntity;
 import com.kyo.homework.data.UserEntity;
+import com.kyo.homework.util.EspressoIdlingResource;
 
 import java.util.List;
 
@@ -117,4 +120,10 @@ public class MomentsActivity extends AppCompatActivity implements MomentsContrac
             swipeRefreshLayout.setEnabled(false);
         }
     };
+
+
+    @VisibleForTesting
+    public IdlingResource getCountingIdlingResource() {
+        return EspressoIdlingResource.getIdlingResource();
+    }
 }
