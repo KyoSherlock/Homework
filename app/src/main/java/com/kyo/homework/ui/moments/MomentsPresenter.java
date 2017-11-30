@@ -3,6 +3,7 @@ package com.kyo.homework.ui.moments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kyo.homework.data.MomentEntity;
 import com.kyo.homework.data.UserEntity;
@@ -18,10 +19,11 @@ import java.util.List;
 
 public class MomentsPresenter implements MomentsContract.Presenter {
 
-    private static final int PAGE_SIZE = 50;
+    private static final int PAGE_SIZE = 5;
     private final MomentsContract.View view;
     private final MomentsRepository repository;
     private int index = 0;
+    private boolean isLoading;
 
     public MomentsPresenter(@NonNull MomentsContract.View view) {
         this.view = view;
@@ -45,48 +47,76 @@ public class MomentsPresenter implements MomentsContract.Presenter {
 
     @Override
     public void loadInitMoments() {
+        if (isLoading) {
+            return;
+        }
+        isLoading = true;
         repository.getMoments(0, PAGE_SIZE, new MyLoadMomentsCallback(this, MyLoadMomentsCallback.TYPE_INIT));
     }
 
     @Override
     public void reloadMoments() {
+        if (isLoading) {
+            return;
+        }
+        isLoading = true;
         repository.getMoments(0, PAGE_SIZE, new MyLoadMomentsCallback(this, MyLoadMomentsCallback.TYPE_RELOAD));
     }
 
     @Override
     public void loadMoreMoments() {
+        if (isLoading) {
+            return;
+        }
+        isLoading = true;
+        Log.e("Kyo","loadMoreMoments, index:" + index);
         repository.getMoments(index, PAGE_SIZE, new MyLoadMomentsCallback(this, MyLoadMomentsCallback.TYPE_MORE));
     }
 
     private void onLoadUser(UserEntity userEntity) {
+        isLoading = false;
         if (userEntity != null && view.isAvailable()) {
             view.showUser(userEntity);
         }
     }
 
+
     private void onLoadInitMoments(List<MomentEntity> momentEntities) {
+        isLoading = false;
+        Log.e("Kyo","onLoadInitMoments, 1 index:" + index);
         if (momentEntities != null && !momentEntities.isEmpty()) {
             view.showInitMoments(momentEntities);
             index = Math.min(PAGE_SIZE, momentEntities.size());
+            Log.e("Kyo","onLoadInitMoments, 2 index:" + index);
         }
     }
 
     private void onReloadMoments(List<MomentEntity> momentEntities) {
+        isLoading = false;
+        Log.e("Kyo","onReloadMoments, 1 index:" + index);
         if (momentEntities != null && !momentEntities.isEmpty()) {
             view.showInitMoments(momentEntities);
             index = Math.min(PAGE_SIZE, momentEntities.size());
+            Log.e("Kyo","onReloadMoments, 2 index:" + index);
         }
         view.hideRefreshLayout();
     }
 
     private void onLoadMoreMoments(List<MomentEntity> momentEntities) {
+        isLoading = false;
+        Log.e("Kyo","onLoadMoreMoments, 1 index:" + index);
         if (momentEntities != null && !momentEntities.isEmpty()) {
             view.hideLoadMoreLayout();
             view.showMoreMoments(momentEntities);
             index = index + Math.min(PAGE_SIZE, momentEntities.size());
+            Log.e("Kyo","onLoadMoreMoments, 2 index:" + index);
         } else {
             view.stopLoadMoreLayout();
         }
+    }
+
+    private void onLoadFailure(Throwable t) {
+        isLoading = false;
     }
 
     private static class MyLoadUserCallback implements MomentsDataSource.LoadUserCallback {
@@ -107,7 +137,10 @@ public class MomentsPresenter implements MomentsContract.Presenter {
 
         @Override
         public void onFailure(Throwable t) {
-
+            MomentsPresenter presenter = presenterWeakRef.get();
+            if (presenter != null) {
+                presenter.onLoadFailure(t);
+            }
         }
     }
 
@@ -139,7 +172,10 @@ public class MomentsPresenter implements MomentsContract.Presenter {
 
         @Override
         public void onFailure(Throwable t) {
-
+            MomentsPresenter presenter = presenterWeakRef.get();
+            if (presenter != null) {
+                presenter.onLoadFailure(t);
+            }
         }
     }
 }

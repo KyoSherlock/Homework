@@ -6,13 +6,13 @@
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/sender_image_size"
-        android:scaleType="centerCrop"
         android:layout_height="@dimen/sender_image_size"
-        android:background="@color/white"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="14dp" />
+        android:layout_marginTop="14dp"
+        android:background="@color/white"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/content_layout"
@@ -42,17 +42,15 @@
             android:id="@+id/image_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:maxHeight="@dimen/moment_1_pic_max_height"
-            android:maxWidth="@dimen/moment_1_pic_max_width" />
+            android:adjustViewBounds="true" />
 
         <TextView
             android:id="@+id/comment"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/moment_comment_margin_top"
             android:layout_marginRight="@dimen/comment_margin_right"
+            android:layout_marginTop="@dimen/moment_comment_margin_top"
             android:background="@color/comment"
             android:gravity="left|center_vertical"
             android:paddingLeft="2dp" />

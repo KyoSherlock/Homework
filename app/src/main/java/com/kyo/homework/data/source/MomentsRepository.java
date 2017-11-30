@@ -1,6 +1,8 @@
 package com.kyo.homework.data.source;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.kyo.homework.data.CommentEntity;
 import com.kyo.homework.data.MomentEntity;
@@ -9,6 +11,7 @@ import com.kyo.homework.data.source.remote.HomeworkRetrofit;
 import com.kyo.homework.data.source.remote.service.MomentsService;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.RunnableFuture;
 
@@ -47,6 +50,7 @@ public class MomentsRepository implements MomentsDataSource {
 
     @Override
     public void getMoments(final int start, final int size, final LoadMomentsCallback callback) {
+        Log.e("Kyo", "getMoments start:" + start + ", size:" + size);
         if (cachedMoments != null) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -60,7 +64,7 @@ public class MomentsRepository implements MomentsDataSource {
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
+                protected void onPostExecute(Void result) {
                     List<MomentEntity> momentEntities = new ArrayList<>(size);
                     for (int i = start; i < cachedMoments.size() && (i - start) < size; i++) {
                         momentEntities.add(cachedMoments.get(i));
@@ -76,6 +80,18 @@ public class MomentsRepository implements MomentsDataSource {
                         public void onResponse(Call<List<MomentEntity>> call, Response<List<MomentEntity>> response) {
                             List<MomentEntity> momentEntities = response.body();
                             if (momentEntities != null) {
+//                                // remove invalid data
+//                                Iterator<MomentEntity> iterator = momentEntities.iterator();
+//                                while (iterator.hasNext()) {
+//                                    MomentEntity entity = iterator.next();
+//                                    if (entity == null ||
+//                                            entity.sender == null ||
+//                                            ((entity.images == null || entity.images.isEmpty()) && TextUtils.isEmpty(entity.content))) {
+//                                        iterator.remove();
+//                                    }
+//                                }
+
+                                // callback
                                 cachedMoments = momentEntities;
                                 momentEntities = new ArrayList<>(size);
                                 for (int i = start; i < cachedMoments.size() && (i - start) < size; i++) {

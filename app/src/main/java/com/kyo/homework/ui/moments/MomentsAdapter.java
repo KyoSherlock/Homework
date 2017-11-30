@@ -383,7 +383,10 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 }
 
-                if (imageNum > 1) {
+                if (imageNum == 1) {
+                    images[0].getLayoutParams().width = imageSize * 3;
+                    images[0].getLayoutParams().height = imageSize * 2;
+                } else {
                     for (ImageView imageView : images) {
                         imageView.getLayoutParams().width = imageSize;
                         imageView.getLayoutParams().height = imageSize;

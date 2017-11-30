@@ -13,6 +13,12 @@ import com.kyo.homework.data.UserEntity;
 
 import java.util.List;
 
+import space.sye.z.library.RefreshRecyclerView;
+import space.sye.z.library.listener.OnBothRefreshListener;
+import space.sye.z.library.listener.OnLoadMoreListener;
+import space.sye.z.library.manager.RecyclerMode;
+import space.sye.z.library.manager.RecyclerViewManager;
+
 /**
  * Created by jianghui on 2017/11/29.
  */
@@ -21,7 +27,7 @@ public class MomentsActivity extends AppCompatActivity implements MomentsContrac
 
     private MomentsContract.Presenter presenter;
     // --
-    private RecyclerView recyclerView;
+    private RefreshRecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private MomentsAdapter momentsAdapter;
     // --
@@ -36,16 +42,22 @@ public class MomentsActivity extends AppCompatActivity implements MomentsContrac
         swipeRefreshLayout = (SwipeRefreshLayout) this.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         // --
-        recyclerView = (RecyclerView) this.findViewById(R.id.recycler_view);
+        recyclerView = (RefreshRecyclerView) this.findViewById(R.id.recycler_view);
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         momentsAdapter = new MomentsAdapter(this);
-        momentsAdapter.setHasStableIds(true);
-        recyclerView.setAdapter(momentsAdapter);
+        RecyclerViewManager.with(momentsAdapter, new LinearLayoutManager(this))
+                .setMode(RecyclerMode.BOTTOM)
+                .setOnLoadMoreListener(onLoadMoreListener)
+                .into(recyclerView, this);
+
+
         // --
         this.presenter = new MomentsPresenter(this);
         this.presenter.loadUser();
         this.presenter.loadInitMoments();
+
+
     }
 
     @Override
@@ -71,30 +83,38 @@ public class MomentsActivity extends AppCompatActivity implements MomentsContrac
         int position = momentsAdapter.getItemCount();
         momentsAdapter.addMoments(momentEntities);
         momentsAdapter.notifyItemInserted(position);
-        swipeRefreshLayout.setEnabled(true);
     }
 
     @Override
     public void hideLoadMoreLayout() {
+        recyclerView.onRefreshCompleted();
         swipeRefreshLayout.setEnabled(true);
     }
 
     @Override
     public void stopLoadMoreLayout() {
+        recyclerView.onRefreshCompleted();
         swipeRefreshLayout.setEnabled(true);
     }
 
     @Override
     public void hideRefreshLayout() {
         swipeRefreshLayout.setRefreshing(false);
+        recyclerView.setMode(RecyclerMode.BOTTOM);
     }
 
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             presenter.reloadMoments();
+            recyclerView.setMode(RecyclerMode.NONE);
         }
     };
-
-
+    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+        @Override
+        public void onLoadMore() {
+            presenter.loadMoreMoments();
+            swipeRefreshLayout.setEnabled(false);
+        }
+    };
 }
