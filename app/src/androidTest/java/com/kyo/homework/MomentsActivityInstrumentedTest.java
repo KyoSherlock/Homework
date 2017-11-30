@@ -139,6 +139,9 @@ public class MomentsActivityInstrumentedTest {
         onView(withText("Louis")).check(matches(isDisplayed()));
     }
 
+    /**
+     * Because notifyDataChanged not update ui immediately, we sleep 2000ms.
+     */
     private void waitForPageRefresh(){
         try {
             Thread.sleep(SWIP_INTERVAL);
