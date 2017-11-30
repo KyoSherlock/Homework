@@ -4,6 +4,8 @@ import com.kyo.homework.data.source.remote.service.MomentsService;
 import com.kyo.homework.data.MomentEntity;
 import com.kyo.homework.data.UserEntity;
 
+import java.util.List;
+
 import retrofit2.Callback;
 
 /**
@@ -18,7 +20,7 @@ public class MomentsRemoteDataSource {
                     .enqueue(callback);
     }
 
-    public static void getMoments(Callback<MomentEntity> callback){
+    public static void getMoments(Callback<List<MomentEntity>> callback){
         HomeworkRetrofit.build().create(MomentsService.class)
                 .getMoments("jsmith")
                 .enqueue(callback);

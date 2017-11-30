@@ -7,7 +7,9 @@
         android:id="@+id/profile_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="35dp" />
+        android:layout_marginBottom="35dp"
+        android:scaleType="centerCrop"
+        android:background="@color/gray" />
 
     <ImageView
         android:id="@+id/avatar"
@@ -16,7 +18,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="12dp"
-        android:background="@color/white"
+        android:background="@drawable/avatar_background"
         android:padding="2dp" />
 
     <TextView
@@ -25,6 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/profile_image"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="4dp"
         android:layout_toLeftOf="@+id/avatar"
         android:gravity="right|center_vertical" />
 

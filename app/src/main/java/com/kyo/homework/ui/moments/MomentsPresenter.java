@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MomentsPresenter implements MomentsContract.Presenter {
 
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 50;
     private final MomentsContract.View view;
     private final MomentsRepository repository;
     private int index = 0;
@@ -81,10 +81,12 @@ public class MomentsPresenter implements MomentsContract.Presenter {
 
     private void onLoadMoreMoments(List<MomentEntity> momentEntities) {
         if (momentEntities != null && !momentEntities.isEmpty()) {
+            view.hideLoadMoreLayout();
             view.showMoreMoments(momentEntities);
             index = index + Math.min(PAGE_SIZE, momentEntities.size());
+        } else {
+            view.stopLoadMoreLayout();
         }
-        view.hideLoadMoreLayout();
     }
 
     private static class MyLoadUserCallback implements MomentsDataSource.LoadUserCallback {

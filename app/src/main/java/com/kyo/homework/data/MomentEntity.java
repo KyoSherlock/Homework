@@ -15,4 +15,6 @@ public class MomentEntity {
     public SenderEntity sender;
 
     public List<CommentEntity> comments ;
+
+    public String error;
 }

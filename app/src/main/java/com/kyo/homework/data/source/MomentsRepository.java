@@ -1,5 +1,7 @@
 package com.kyo.homework.data.source;
 
+import android.os.AsyncTask;
+
 import com.kyo.homework.data.CommentEntity;
 import com.kyo.homework.data.MomentEntity;
 import com.kyo.homework.data.UserEntity;
@@ -8,6 +10,7 @@ import com.kyo.homework.data.source.remote.service.MomentsService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RunnableFuture;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,11 +48,26 @@ public class MomentsRepository implements MomentsDataSource {
     @Override
     public void getMoments(final int start, final int size, final LoadMomentsCallback callback) {
         if (cachedMoments != null) {
-            List<MomentEntity> momentEntities = new ArrayList<>(size);
-            for (int i = start; i < cachedMoments.size() && (i - start) < size; i++) {
-                momentEntities.add(cachedMoments.get(i));
-            }
-            callback.onMomentsLoaded(momentEntities);
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    List<MomentEntity> momentEntities = new ArrayList<>(size);
+                    for (int i = start; i < cachedMoments.size() && (i - start) < size; i++) {
+                        momentEntities.add(cachedMoments.get(i));
+                    }
+                    callback.onMomentsLoaded(momentEntities);
+                }
+            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         } else {
             HomeworkRetrofit.build().create(MomentsService.class)
                     .getMoments(USER)

@@ -5,5 +5,9 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#FFFFFF</color>
-    <color name="comment">#55555555</color>
+    <color name="comment">#55aaaaaa</color>
+    <color name="sender">#46b3da</color>
+    <color name="gray">#888888</color>
+    <color name="line">#55aaaaaa</color>
+    <color name="windowBackground">#eeeeee</color>
 </resources>

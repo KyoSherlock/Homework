@@ -23,6 +23,8 @@ public class MomentsContract {
 
         void hideLoadMoreLayout();
 
+        void stopLoadMoreLayout();
+
         void hideRefreshLayout();
     }
 

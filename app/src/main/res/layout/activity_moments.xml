@@ -3,30 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/profile_image"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/profile_image"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="-35dp"
-        android:background="@color/white"
-        android:padding="2dp" />
-
-    <TextView
-        android:id="@+id/nick"
-        style="@style/TextAppearance.AppCompat.Subhead.Inverse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/profile_image"
-        android:layout_toLeftOf="@+id/avatar"
-        android:gravity="right|center_vertical" />
-
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

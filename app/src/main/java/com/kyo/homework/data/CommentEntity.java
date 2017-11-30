@@ -6,6 +6,6 @@ package com.kyo.homework.data;
 
 public class CommentEntity {
 
-    private String content;
-    private SenderEntity sender;
+    public String content;
+    public SenderEntity sender;
 }
