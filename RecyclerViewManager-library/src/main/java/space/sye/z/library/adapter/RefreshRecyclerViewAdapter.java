@@ -10,6 +10,7 @@ package space.sye.z.library.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import java.util.ArrayList;
 
 import space.sye.z.library.holder.RecyclerHeaderViewHolder;
+import space.sye.z.library.widget.RotateLoadingLayout;
 
 /**
  * Created by Syehunter on 2015/11/2.
@@ -96,20 +98,21 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     /**
      * 获取最后一个footer，用于判断当前是否处于LoadMore状态
+     *
      * @return
      */
-    public View getLastFooter(){
+    public View getLastFooter() {
         return mFooterViews.get(mFooterViews.size() - 1);
     }
 
     /**
      * 获取第一个header，用于判断当前是否处于PullDown状态
+     *
      * @return
      */
-    public View getFirstHeader(){
+    public View getFirstHeader() {
         return mHeaderViews.get(0);
     }
-
 
 
     /**
@@ -199,7 +202,7 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         if (null != mAdapter) {
             if (position >= getHeadersCount() && position < getHeadersCount() + mAdapter.getItemCount()) {
                 mAdapter.onBindViewHolder(holder, position - getHeadersCount());
-                if(null != mOnItemClickListener){
+                if (null != mOnItemClickListener) {
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -207,7 +210,7 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         }
                     });
                 }
-                if (null != mOnItemLongClickListener){
+                if (null != mOnItemLongClickListener) {
                     holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
@@ -216,7 +219,7 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                     });
                 }
             } else {
-                if(null != mLayoutManager && mLayoutManager instanceof StaggeredGridLayoutManager){
+                if (null != mLayoutManager && mLayoutManager instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager.LayoutParams params = new StaggeredGridLayoutManager.LayoutParams(
                             StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT,
                             StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT);
@@ -231,6 +234,17 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (holder.getAdapterPosition() == getHeadersCount() + mAdapter.getItemCount() + getFootersCount() - 1) {
+            if (holder.itemView instanceof RotateLoadingLayout) {
+                RotateLoadingLayout rotateLoadingLayout = (RotateLoadingLayout) holder.itemView;
+                rotateLoadingLayout.startAnimation();
+            }
+        }
+    }
+
     /**
      * @return headerView's counts
      */
@@ -241,7 +255,7 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return 0;
     }
 
-    public ArrayList<View> getHeaderViews(){
+    public ArrayList<View> getHeaderViews() {
         return mHeaderViews;
     }
 
@@ -255,16 +269,16 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return 0;
     }
 
-    public ArrayList<View> getFooterViews(){
+    public ArrayList<View> getFooterViews() {
         return mFooterViews;
     }
 
-    public void addHeaderView(View v, int position){
-        if (null != v){
-            if(mHeaderViews.contains(v)){
+    public void addHeaderView(View v, int position) {
+        if (null != v) {
+            if (mHeaderViews.contains(v)) {
                 mHeaderViews.remove(v);
             }
-            if (position > mHeaderViews.size()){
+            if (position > mHeaderViews.size()) {
                 position = mHeaderViews.size();
             }
             mHeaderViews.add(position, v);
@@ -294,7 +308,7 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
      */
     public void addFooterView(View v) {
         if (null != v) {
-            if(mFooterViews.contains(v)){
+            if (mFooterViews.contains(v)) {
                 removeFooter(v);
             }
             mFooterViews.add(v);
@@ -304,24 +318,26 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     /**
      * 判断当前是否是header
+     *
      * @param position
      * @return
      */
-    public boolean isHeader(int position){
+    public boolean isHeader(int position) {
         return getHeadersCount() > 0 && position <= getHeadersCount() - 1;
     }
 
     /**
      * 判断当前是否是footer
+     *
      * @param position
      * @return
      */
-    public boolean isFooter(int position){
+    public boolean isFooter(int position) {
         int lastPosition = getItemCount() - getFootersCount();
         return getFootersCount() > 0 && position >= lastPosition;
     }
 
-    public void putLayoutManager(RecyclerView.LayoutManager layoutManager){
+    public void putLayoutManager(RecyclerView.LayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
     }
 
@@ -358,19 +374,19 @@ public class RefreshRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     };
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onItemClick(RecyclerView.ViewHolder holder, int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
     }
 
-    public interface OnItemLongClickListener{
+    public interface OnItemLongClickListener {
         boolean onItemLongCLick(RecyclerView.ViewHolder holder, int position);
     }
 
-    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener){
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.mOnItemLongClickListener = onItemLongClickListener;
     }
 

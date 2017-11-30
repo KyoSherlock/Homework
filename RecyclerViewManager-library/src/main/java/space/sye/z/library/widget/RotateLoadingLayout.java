@@ -79,6 +79,14 @@ public class RotateLoadingLayout extends RefreshLoadingLayout {
         addView(view);
     }
 
+    public void startAnimation(){
+        mImage.setImageDrawable(imageDrawable);
+        if (null != mImage.getAnimation()){
+            mImage.clearAnimation();
+        }
+        mImage.startAnimation(mRotateAnimation);
+    }
+
     @Override
     protected void onRefreshImpl() {
         mImage.setImageDrawable(imageDrawable);
